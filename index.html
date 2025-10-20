@@ -14,14 +14,20 @@
       fetch("https://0aa80099037623af80f02bee00f60012.web-security-academy.net/accountDetails", {
         method: "GET",
         credentials: "include" // 带上登录 Cookie
-        // GET 请求不应有 body 或 Content-Type 头
+        // ❌ 注意这里不要写 body，也不要写 Content-Type 头
       })
       .then(response => {
-        // 如果返回的是 JSON：
-        return response.json().catch(() => response.text());
+        // 自动处理 JSON 或文本
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          return response.json();
+        } else {
+          return response.text();
+        }
       })
       .then(data => {
-        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        document.getElementById('result').textContent =
+          typeof data === "string" ? data : JSON.stringify(data, null, 2);
         console.log("返回数据：", data);
       })
       .catch(error => {
